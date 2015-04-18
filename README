@@ -1,0 +1,3 @@
+Rules:
+======
+- Try to not uset 'set -e'
