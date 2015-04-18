@@ -72,8 +72,9 @@ function wait_instance()
 function create_wait_instance()
 {
     local instance=$(create_instance)
-    wait_instance $instance
-    echo $instance
+    local ip=$(wait_instance $instance)
+    wait_ssh $ip >& /dev/null
+    echo $instance $ip
 }
 function terminate_instance()
 {
