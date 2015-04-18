@@ -110,7 +110,7 @@ function execute_command()
     local ip=$1
     shift
 
-    ssh $(ssh_options) $(ssh_user)@$ip $@
+    ssh $(ssh_options) -t $(ssh_user)@$ip $@
 }
 function copy()
 {
