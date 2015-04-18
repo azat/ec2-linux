@@ -99,6 +99,7 @@ function make_kernel()
 
     make olddefconfig
     patch_kernel_add_xen
+    make olddefconfig
     make-kpkg --rootcmd fakeroot --initrd kernel_image -j1 >/dev/null
 }
 function restart_kernel_with_bisecting()
