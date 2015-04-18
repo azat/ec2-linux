@@ -50,7 +50,7 @@ function restart_kernel_with_bisecting()
     deb=$(ls -t ../*.deb | head -1)
     copy $deb $ip:/tmp/
     execute_command $ip 'sudo dpkg -i /tmp/*.deb'
-    reboot_instance $instance
+    reboot_wait_instance $instance $ip
 }
 # XXX: special exit code
 function check_kernel()
