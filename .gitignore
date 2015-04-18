@@ -1,0 +1,4 @@
+*.pem
+*.log
+*.sw[poa]
+/config.sh
