@@ -1,3 +1,7 @@
 Rules:
 ======
 - Try to not uset 'set -e'
+- Make rule about one/multi instance more strict
+  We need a fresh instance for every build because some of builds could be
+  unbootable, but all we need is to build using another kernel image, so we
+  could just do some manipulations with underlaying storage in future.
