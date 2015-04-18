@@ -84,6 +84,18 @@ function reboot_instance()
 {
     aws ec2 reboot-instances --instance-ids $@
 }
+function reboot_wait_instance()
+{
+    local instance=$1
+    local ip=$2
+
+    # XXX: Or just execute_command 'shutdown -r now', but with this instance
+    # will not reboot right now, but after sometime, and we could have stalled
+    # instance
+    execute_command $ip sync
+    reboot_instance $instance
+    wait_ssh $ip >& /dev/null
+}
 function console_instance()
 {
     local t=1
