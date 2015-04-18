@@ -65,6 +65,9 @@ function check_kernel()
     check_command $instance $ip || exit 1
 
     restart_kernel_with_bisecting $instance $ip
+    # XXX: this is also additional waiting
+    log "Instance $instance:$ip rebooted"
+    console_instance $instance
 
     log "Check with bisected kernel"
     check_command $instance $ip || exit 1
