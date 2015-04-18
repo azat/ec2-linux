@@ -105,6 +105,21 @@ function ssh_options()
         -o ConnectTimeout=$t \
         -i $key
 }
+function wait_ssh()
+{
+    local ip=$1
+    shift
+    local retries=10
+    local t=1
+
+    local i=0
+    while [ $i -lt $retries ]; do
+        execute_command $ip uname -a && return 0 || continue
+        let --i
+        sleep 1
+    done
+    return 1
+}
 function execute_command()
 {
     local ip=$1
