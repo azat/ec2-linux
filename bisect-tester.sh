@@ -35,11 +35,70 @@ function check_command()
     fi
     return 0
 }
+function patch_kernel_add_xen()
+{
+    local config=.config
+    # XXX v3.19-rc5 only (we need better mechanism)
+    local options=(
+        CONFIG_HYPERVISOR_GUEST=y
+        CONFIG_PARAVIRT=y
+        CONFIG_XEN=y
+        CONFIG_XEN_DOM0=y
+        CONFIG_XEN_PVHVM=y
+        CONFIG_XEN_MAX_DOMAIN_MEMORY=500
+        CONFIG_XEN_SAVE_RESTORE=y
+        CONFIG_PARAVIRT_CLOCK=y
+        CONFIG_PCI_XEN=y
+        CONFIG_XEN_PCIDEV_FRONTEND=y
+        CONFIG_SYS_HYPERVISOR=y
+        CONFIG_XEN_BLKDEV_FRONTEND=y
+        CONFIG_XEN_BLKDEV_BACKEND=y
+        CONFIG_XEN_NETDEV_FRONTEND=y
+        CONFIG_XEN_NETDEV_BACKEND=y
+        CONFIG_INPUT_XEN_KBDDEV_FRONTEND=y
+        CONFIG_HVC_DRIVER=y
+        CONFIG_HVC_IRQ=y
+        CONFIG_HVC_XEN=y
+        CONFIG_HVC_XEN_FRONTEND=y
+        CONFIG_FB_SYS_FILLRECT=m
+        CONFIG_FB_SYS_COPYAREA=m
+        CONFIG_FB_SYS_IMAGEBLIT=m
+        CONFIG_FB_SYS_FOPS=m
+        CONFIG_FB_DEFERRED_IO=y
+        CONFIG_XEN_FBDEV_FRONTEND=m
+        CONFIG_XEN_BALLOON=y
+        CONFIG_XEN_SCRUB_PAGES=y
+        CONFIG_XEN_DEV_EVTCHN=y
+        CONFIG_XEN_BACKEND=y
+        CONFIG_XENFS=y
+        CONFIG_XEN_COMPAT_XENFS=y
+        CONFIG_XEN_SYS_HYPERVISOR=y
+        CONFIG_XEN_XENBUS_FRONTEND=y
+        CONFIG_XEN_GNTDEV=m
+        CONFIG_XEN_GRANT_DEV_ALLOC=m
+        CONFIG_SWIOTLB_XEN=y
+        CONFIG_XEN_PCIDEV_BACKEND=m
+        CONFIG_XEN_PRIVCMD=y
+        CONFIG_XEN_ACPI_PROCESSOR=m
+        CONFIG_XEN_HAVE_PVMMU=y
+        CONFIG_XEN_EFI=y
+    )
+
+    echo "# Patching for XEN (AWS EC2)" >> $config
+    for o in ${options[@]}; do
+        local key=${o/=*/}
+        egrep -q "$key(=|\W|$)" $config && \
+            sed -i "s/^.*$key.*$/$o/" $config || \
+            echo $o >> $config
+    done
+    log "Patched for XEN"
+}
 function make_kernel()
 {
     log "Making kernel package"
 
     make olddefconfig
+    patch_kernel_add_xen
     make-kpkg --rootcmd fakeroot --initrd kernel_image -j1 >/dev/null
 }
 function restart_kernel_with_bisecting()
