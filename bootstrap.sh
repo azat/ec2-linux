@@ -59,7 +59,7 @@ function wait_instance()
     local t=1
 
     local address=None
-    while [ $address = None ]; do
+    while [ "$address" = None ]; do
         address=$(aws ec2 describe-instances \
             --instance-ids $@ \
             --query 'Reservations[0].Instances[0].PublicIpAddress' \
