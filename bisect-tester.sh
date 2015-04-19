@@ -2,6 +2,7 @@
 
 SELF="$1"
 SOURCES="$2"
+SCRIPT="$3"
 
 trap cleanup EXIT
 
@@ -139,7 +140,8 @@ function check_kernel()
     console_instance $instance
 
     log "Check with bisected kernel"
-    check_command $instance $ip || exit 1
+    copy $SCRIPT $ip:/tmp/
+    check_command $instance $ip /tmp/$(basename $SCRIPT) || exit 1
 }
 
 function cleanup()

@@ -8,17 +8,18 @@ function run_bisect()
 {
     local self="$SELF"
     local sources="$1"
-    shift
+    local script="$(readlink -f "$self/$2")"
+    shift 2
 
     cd "$sources"
     git bisect start $@
-    git bisect run bisect-tester.sh $self $sources
+    git bisect run bisect-tester.sh $self $sources $script
     git bisect log
 }
 
 function print_help()
 {
-    echo "$0 [ OPTS ] /path/to/linux-sources args-for-bisect" >&2
+    echo "$0 [ OPTS ] /path/to/linux-sources /tester-script args-for-bisect" >&2
     echo " -p     - prepare"
     echo
     echo " -h     - print this message"
