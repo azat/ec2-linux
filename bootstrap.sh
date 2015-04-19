@@ -149,3 +149,22 @@ function copy()
 
     scp $(ssh_options) $from $(ssh_user)@$to
 }
+
+function ec2_date()
+{
+    local format="%Y-%m-%dT%H:%I:%S"
+    TZ=EDT date +$format "$@"
+}
+function monitoring_instance()
+{
+    local instance=$1
+    local metric=$2
+    shift 2
+    aws cloudwatch get-metric-statistics --namespace AWS/EC2 --period 600 --statistics Average --metric-name $metric --dimensions Name=InstanceId,Value=$instance $@
+}
+function monitoring_instance_current()
+{
+    local from=$(ec2_date -d'now -1 day')
+    local to=$(ec2_date -d'now +1 day')
+    monitoring_instance $@ --start-time $from --end-time $to
+}
