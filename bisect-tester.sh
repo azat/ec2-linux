@@ -102,14 +102,23 @@ function make_kernel()
     make olddefconfig
     make-kpkg --rootcmd fakeroot --initrd kernel_image -j1 >/dev/null
 }
+function drop_legacy_ec2_grub()
+{
+    local ip=$1
+    execute_command $ip 'sudo apt-get --yes --force-yes purge grub-legacy-ec2'
+    execute_command $ip 'sudo update-grub'
+    execute_command $ip 'sudo grub-install /dev/xvda'
+}
 function restart_kernel_with_bisecting()
 {
     local instance=$1
     local ip=$2
 
+    # XXX: be more smart, using version
     deb=$(ls -t ../*.deb | head -1)
     copy $deb $ip:/tmp/
     execute_command $ip 'sudo dpkg -i /tmp/*.deb'
+    drop_legacy_ec2_grub $ip
     reboot_wait_instance $instance $ip
 }
 # XXX: special exit code
