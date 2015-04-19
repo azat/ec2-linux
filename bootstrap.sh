@@ -73,7 +73,7 @@ function create_wait_instance()
 {
     local instance=$(create_instance)
     local ip=$(wait_instance $instance)
-    wait_ssh $ip >& /dev/null
+    wait_command $ip uname -a >& /dev/null
     echo $instance $ip
 }
 function terminate_instance()
@@ -94,7 +94,7 @@ function reboot_wait_instance()
     # instance
     execute_command $ip sync
     reboot_instance $instance
-    wait_ssh $ip >& /dev/null
+    wait_command $ip uname -a >& /dev/null
 }
 function console_instance()
 {
@@ -118,7 +118,7 @@ function ssh_options()
         -o ConnectTimeout=$t \
         -i $key
 }
-function wait_ssh()
+function wait_command()
 {
     local ip=$1
     shift
@@ -127,7 +127,7 @@ function wait_ssh()
 
     local i=0
     while [ $i -lt $retries ]; do
-        execute_command $ip uname -a && return 0 || continue
+        execute_command $ip $@ && return 0 || continue
         let --i
         sleep 1
     done
