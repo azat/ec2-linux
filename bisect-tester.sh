@@ -29,7 +29,7 @@ function check_command()
     local cmd=${@:-"uname -r"}
     show_config $ip
 
-    if ! execute_command $ip $cmd; then
+    if ! wait_command $ip $cmd; then
         console_instance $instance
         return 1
     fi
