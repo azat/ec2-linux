@@ -51,7 +51,9 @@ function create_instance()
     aws ec2 run-instances \
         --image-id $id --count 1 \
         --instance-type $t --key-name $key \
-        --security-groups $sg --query 'Instances[0].InstanceId' \
+        --security-groups $sg \
+        --query 'Instances[0].InstanceId' \
+        $@ \
     | tr -d '"'
 }
 function wait_instance()
