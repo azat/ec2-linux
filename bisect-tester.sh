@@ -101,7 +101,7 @@ function make_kernel()
     make olddefconfig
     patch_kernel_add_xen
     make olddefconfig
-    make-kpkg --rootcmd fakeroot --initrd kernel_image -j1 >/dev/null
+    make-kpkg --rootcmd fakeroot --initrd kernel_image $MAKE_KPKG_OPTIONS >/dev/null
 }
 function drop_legacy_ec2_grub()
 {
