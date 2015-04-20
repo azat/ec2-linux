@@ -26,7 +26,7 @@ function bench()
 }
 function mkfs()
 {
-    mke2fs -F -t ext4 -I $((1<<12)) -i $((1<<13)) $@
+    mke2fs -F -t ext4 -I 4096 -m 0 -q $@
 }
 
 log "noinline data"
