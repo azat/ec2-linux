@@ -53,7 +53,7 @@ function create_instance()
         --instance-type $t --key-name $key \
         --security-groups $sg \
         --query 'Instances[0].InstanceId' \
-        $@ \
+        "$@" \
     | tr -d '"'
 }
 function wait_instance()
@@ -63,7 +63,7 @@ function wait_instance()
     local address=None
     while [ "$address" = None ]; do
         address=$(aws ec2 describe-instances \
-            --instance-ids $@ \
+            --instance-ids "$@" \
             --query 'Reservations[0].Instances[0].PublicIpAddress' \
             2>/dev/null)
         sleep $t
@@ -80,11 +80,11 @@ function create_wait_instance()
 }
 function terminate_instance()
 {
-    aws ec2 terminate-instances --instance-ids $@
+    aws ec2 terminate-instances --instance-ids "$@"
 }
 function reboot_instance()
 {
-    aws ec2 reboot-instances --instance-ids $@
+    aws ec2 reboot-instances --instance-ids "$@"
 }
 function reboot_wait_instance()
 {
@@ -102,7 +102,7 @@ function console_instance()
 {
     local t=1
 
-    while ! aws ec2 get-console-output --instance-id $@ 2>/dev/null; do
+    while ! aws ec2 get-console-output --instance-id "$@" 2>/dev/null; do
         sleep $t
     done
 }
@@ -129,7 +129,7 @@ function wait_command()
 
     local i=0
     while [ $i -lt $retries ]; do
-        execute_command $ip $@ && return 0 || continue
+        execute_command $ip "$@" && return 0 || continue
         let --i
         sleep 1
     done
@@ -140,7 +140,7 @@ function execute_command()
     local ip=$1
     shift
 
-    ssh $(ssh_options) -t $(ssh_user)@$ip $@
+    ssh $(ssh_options) -t $(ssh_user)@$ip "$@"
 }
 function copy()
 {
@@ -160,11 +160,11 @@ function monitoring_instance()
     local instance=$1
     local metric=$2
     shift 2
-    aws cloudwatch get-metric-statistics --namespace AWS/EC2 --period 600 --statistics Average --metric-name $metric --dimensions Name=InstanceId,Value=$instance $@
+    aws cloudwatch get-metric-statistics --namespace AWS/EC2 --period 600 --statistics Average --metric-name $metric --dimensions Name=InstanceId,Value=$instance "$@"
 }
 function monitoring_instance_current()
 {
     local from=$(ec2_date -d'now -1 day')
     local to=$(ec2_date -d'now +1 day')
-    monitoring_instance $@ --start-time $from --end-time $to
+    monitoring_instance "$@" --start-time $from --end-time $to
 }
