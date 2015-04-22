@@ -168,3 +168,16 @@ function monitoring_instance_current()
     local to=$(ec2_date -d'now +1 day')
     monitoring_instance "$@" --start-time $from --end-time $to
 }
+
+function instance_status()
+{
+    local id=$1
+    aws ec2 describe-instance-status --instance-id $id "$@"
+}
+function instance_status_ok()
+{
+    test $(instance_status "$@" --filter \
+               Name=instance-status.reachability,Values=passed \
+               Name=system-status.reachability,Values=passed \
+           | wc -l) -gt 0
+}
