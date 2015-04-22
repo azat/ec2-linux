@@ -129,9 +129,9 @@ function wait_command()
 
     local i=0
     while [ $i -lt $retries ]; do
-        execute_command $ip "$@" && return 0 || continue
         let --i
         sleep 1
+        execute_command $ip "$@" && return 0 || continue
     done
     return 1
 }
