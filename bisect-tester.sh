@@ -12,6 +12,13 @@ export PATH=$PATH:$SELF
 source bootstrap.sh
 version=$(git describe)
 
+declare -A BISECT_CODES
+BISECT_CODES=(
+    [GOOD]=0
+    [BAD]=1
+    [SKIP]=125
+)
+
 function log()
 {
     local d=$(date +'%Y-%m-%d %H:%I:%S')
@@ -122,7 +129,19 @@ function restart_kernel_with_bisecting()
     drop_legacy_ec2_grub $ip
     reboot_wait_instance $instance $ip
 }
-# XXX: special exit code
+function check_command_status()
+{
+    local status=$1
+    local SSH_INTERNAL_ERROR_CODE=255
+
+    [ $status -eq 0 ] && return
+
+    [ $BISECT_TESTER_SKIP_UNAVAILABLE -eq 1 ] && \
+        [ $status -eq $SSH_INTERNAL_ERROR_CODE ] && \
+        exit ${BISECT_CODES[SKIP]}
+
+    exit ${BISECT_CODES[BAD]}
+}
 function check_kernel()
 {
     log "Creating instance"
@@ -142,6 +161,7 @@ function check_kernel()
     log "Check with bisected kernel"
     copy $SCRIPT $ip:/tmp/
     check_command $instance $ip /tmp/$(basename $SCRIPT) || exit 1
+    check_command_status $?
 }
 
 function cleanup()

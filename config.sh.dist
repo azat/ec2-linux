@@ -5,3 +5,10 @@ WHITELIST_IPADDRESSES=(
     0.0.0.0
 )
 MAKE_KPKG_OPTIONS=-j1
+
+# If it will be installed to 1, bisect-tester will skip commits, if we
+# can't login to this kernel using ssh (it means that we have some
+# internal error, since not always it is unbootable kernel, it could be
+# something with network, and if you wan't to test particular subsystem
+# (except obviously network) you could use this).
+BISECT_TESTER_SKIP_UNAVAILABLE=1
