@@ -110,6 +110,17 @@ function make_kernel()
     make olddefconfig
     make-kpkg --rootcmd fakeroot --initrd kernel_image $MAKE_KPKG_OPTIONS >/dev/null
 }
+function make_kernel_status()
+{
+    local status=$1
+
+    [ $status -eq 0 ] && return
+
+    [ $BISECT_TESTER_SKIP_UNCOMPILABLE -eq 1 ] && \
+        exit ${BISECT_CODES[SKIP]}
+
+    exit ${BISECT_CODES[BAD]}
+}
 function drop_legacy_ec2_grub()
 {
     local ip=$1
@@ -173,7 +184,8 @@ function cleanup()
 function main()
 {
     show_config
-    make_kernel || exit 1
+    make_kernel
+    make_kernel_status $?
     check_kernel
 }
 main

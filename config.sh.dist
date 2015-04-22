@@ -12,3 +12,7 @@ MAKE_KPKG_OPTIONS=-j1
 # something with network, and if you wan't to test particular subsystem
 # (except obviously network) you could use this).
 BISECT_TESTER_SKIP_UNAVAILABLE=1
+# Skip uncompilable revisions, useful if you wan't to debug a lot of commits,
+# while some of them can be uncompilable, and you are not interesting in this,
+# you are interesting in particular subsystem.
+BISECT_TESTER_SKIP_UNCOMPILABLE=1
