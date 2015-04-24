@@ -128,12 +128,14 @@ function wait_command()
     local t=1
 
     local i=0
+    local status=0
     while [ $i -lt $retries ]; do
         let ++i
         sleep 1
-        execute_command $ip "$@" && return 0 || continue
+        execute_command $ip "$@" && return 0
+        status=$?
     done
-    return 1
+    return $status
 }
 function execute_command()
 {
