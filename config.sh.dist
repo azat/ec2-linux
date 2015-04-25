@@ -16,3 +16,10 @@ BISECT_TESTER_SKIP_UNAVAILABLE=1
 # while some of them can be uncompilable, and you are not interesting in this,
 # you are interesting in particular subsystem.
 BISECT_TESTER_SKIP_UNCOMPILABLE=1
+
+# Change instance type, since for reproducing some stuff you could need some
+# specific configuration (many CPU's, memory, e.t.c).
+EC2_INSTANCE_TYPE=t2.micro
+# Change AMI for instance (must be deb like, since we use dpkg)
+# Default: ubuntu server 14.04
+EC2_AMI=ami-accff2b1

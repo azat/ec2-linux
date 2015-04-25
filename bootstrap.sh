@@ -43,14 +43,14 @@ function prepare()
 
 function create_instance()
 {
-    local id=ami-accff2b1 # ubuntu server 14.04
-    local t=t2.micro
     local key=$(key_name)
     local sg=$(sg_name)
 
     aws ec2 run-instances \
-        --image-id $id --count 1 \
-        --instance-type $t --key-name $key \
+        --image-id $EC2_AMI \
+        --count 1 \
+        --instance-type $EC2_INSTANCE_TYPE \
+        --key-name $key \
         --security-groups $sg \
         --query 'Instances[0].InstanceId' \
         "$@" \
