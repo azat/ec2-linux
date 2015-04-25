@@ -117,6 +117,7 @@ function ssh_options()
     local t=300
     echo \
         -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
         -o ConnectTimeout=$t \
         -i $key
 }
