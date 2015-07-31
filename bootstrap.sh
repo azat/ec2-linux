@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SELF=$(readlink -f "$(dirname $0)")
+SELF=$(readlink -f "$(dirname ${BASH_SOURCE[0]})")
 source $SELF/config.sh
 
 function sg_name()
